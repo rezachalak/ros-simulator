@@ -1,0 +1,25 @@
+FROM osrf/ros:humble-desktop
+
+# GUI stack: virtual framebuffer + VNC + noVNC web proxy
+# Simulation:  Gazebo Classic 11  (ros-humble-gazebo-ros-pkgs)
+# DDS:         CycloneDDS
+RUN apt-get update && apt-get install -y \
+    # Display / VNC
+    xvfb \
+    x11vnc \
+    novnc \
+    websockify \
+    openbox \
+    # Gazebo Classic
+    ros-humble-gazebo-ros-pkgs \
+    ros-humble-gazebo-ros \
+    # DDS
+    ros-humble-rmw-cyclonedds-cpp \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY scripts/start_desktop.sh /start_desktop.sh
+RUN chmod +x /start_desktop.sh
+
+EXPOSE 8080 5900
+
+ENTRYPOINT ["/start_desktop.sh"]

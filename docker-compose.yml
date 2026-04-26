@@ -1,0 +1,78 @@
+# ROS 2 Humble — obstacle-avoiding robot demo
+# Two custom nodes communicate across containers:
+#   obstacle_detector  →  /obstacle_info  →  robot_controller  →  /cmd_vel  →  Gazebo
+#   Gazebo             →  /scan           →  obstacle_detector
+#
+# GUI: open http://localhost:8080/vnc.html in your browser (no VNC client needed)
+#
+# All services use Docker's default bridge (docker0) instead of a user-defined
+# bridge. User-defined bridges on Colima do not allow setsockopt(IP_MULTICAST_IF)
+# on eth0, which breaks both CycloneDDS and Gazebo Classic transport. CycloneDDS
+# multicast peer discovery handles cross-container DDS on its own — we don't need
+# Compose's service-name DNS.
+
+x-ros-env: &ros-env
+  ROS_DOMAIN_ID: "0"
+  RMW_IMPLEMENTATION: rmw_cyclonedds_cpp
+  CYCLONEDDS_URI: /cyclonedds.xml
+
+x-ros-vols: &ros-vols
+  - ./cyclonedds.xml:/cyclonedds.xml:ro
+
+services:
+
+  # ── Node 1: reads /scan, publishes /obstacle_info ──────────────────────────
+  obstacle_detector:
+    network_mode: bridge
+    build:
+      context: .
+      dockerfile: Dockerfile.nodes
+    command: >
+      bash -c "
+        source /opt/ros/humble/setup.bash &&
+        source /ros_ws/install/setup.bash &&
+        ros2 run obstacle_avoidance obstacle_detector
+      "
+    environment:
+      <<: *ros-env
+    volumes: *ros-vols
+    restart: unless-stopped
+
+  # ── Node 2: reads /obstacle_info, publishes /cmd_vel ───────────────────────
+  robot_controller:
+    network_mode: bridge
+    build:
+      context: .
+      dockerfile: Dockerfile.nodes
+    command: >
+      bash -c "
+        source /opt/ros/humble/setup.bash &&
+        source /ros_ws/install/setup.bash &&
+        ros2 run obstacle_avoidance robot_controller
+      "
+    environment:
+      <<: *ros-env
+    volumes: *ros-vols
+    depends_on:
+      - obstacle_detector
+    restart: unless-stopped
+
+  # ── Desktop: Gazebo simulation + RViz2, accessible via browser ─────────────
+  desktop:
+    network_mode: bridge
+    build:
+      context: .
+      dockerfile: Dockerfile.desktop
+    ports:
+      - "8080:8080"   # noVNC web UI  → http://localhost:8080/vnc.html
+      - "5900:5900"   # raw VNC port  (optional VNC client)
+    environment:
+      <<: *ros-env
+      DISPLAY: ":1"
+      GAZEBO_MODEL_PATH: /models
+    volumes:
+      - ./cyclonedds.xml:/cyclonedds.xml:ro
+      - ./worlds:/worlds:ro
+      - ./models:/models:ro
+      - ./rviz:/rviz:ro
+    restart: unless-stopped
