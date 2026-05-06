@@ -1,8 +1,8 @@
 # Project Memories — ros-simulator
 
 ## Stack
-- **ROS 2 Humble** on Ubuntu 22.04 (Jammy) base images
-- **Gazebo Classic 11** via `ros-humble-gazebo-ros-pkgs`
+- **ROS 2 Iron** on Ubuntu 22.04 (Jammy) base images
+- **Gazebo Classic 11** via `ros-iron-gazebo-ros-pkgs`
 - **CycloneDDS** (`rmw_cyclonedds_cpp`) for reliable ROS 2 node discovery across Docker containers
 - **noVNC + x11vnc + Xvfb** for browser-based GUI (no XQuartz needed on macOS) — access at `http://localhost:8080/vnc.html`
 

@@ -30,7 +30,7 @@ websockify --web /usr/share/novnc 8080 localhost:5900 &
 sleep 1
 
 # ── ROS 2 environment ──────────────────────────────────────────────────────
-source /opt/ros/humble/setup.bash
+source /opt/ros/iron/setup.bash
 export GAZEBO_MODEL_PATH=/models:${GAZEBO_MODEL_PATH}
 
 # ── Gazebo simulation ──────────────────────────────────────────────────────

@@ -1,7 +1,7 @@
-FROM osrf/ros:humble-desktop
+FROM osrf/ros:iron-desktop
 
 # GUI stack: virtual framebuffer + VNC + noVNC web proxy
-# Simulation:  Gazebo Classic 11  (ros-humble-gazebo-ros-pkgs)
+# Simulation:  Gazebo 8  (ros-iron-gazebo-ros-pkgs)
 # DDS:         CycloneDDS
 RUN apt-get update && apt-get install -y \
     # Display / VNC
@@ -10,11 +10,11 @@ RUN apt-get update && apt-get install -y \
     novnc \
     websockify \
     openbox \
-    # Gazebo Classic
-    ros-humble-gazebo-ros-pkgs \
-    ros-humble-gazebo-ros \
+    # Gazebo
+    ros-iron-gazebo-ros-pkgs \
+    ros-iron-gazebo-ros \
     # DDS
-    ros-humble-rmw-cyclonedds-cpp \
+    ros-iron-rmw-cyclonedds-cpp \
     && rm -rf /var/lib/apt/lists/*
 
 COPY scripts/start_desktop.sh /start_desktop.sh

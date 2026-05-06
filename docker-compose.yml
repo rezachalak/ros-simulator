@@ -1,4 +1,4 @@
-# ROS 2 Humble — obstacle-avoiding robot demo
+# ROS 2 Iron — obstacle-avoiding robot demo
 # Two custom nodes communicate across containers:
 #   obstacle_detector  →  /obstacle_info  →  robot_controller  →  /cmd_vel  →  Gazebo
 #   Gazebo             →  /scan           →  obstacle_detector
@@ -29,7 +29,7 @@ services:
       dockerfile: Dockerfile.nodes
     command: >
       bash -c "
-        source /opt/ros/humble/setup.bash &&
+        source /opt/ros/iron/setup.bash &&
         source /ros_ws/install/setup.bash &&
         ros2 run obstacle_avoidance obstacle_detector
       "
@@ -46,7 +46,7 @@ services:
       dockerfile: Dockerfile.nodes
     command: >
       bash -c "
-        source /opt/ros/humble/setup.bash &&
+        source /opt/ros/iron/setup.bash &&
         source /ros_ws/install/setup.bash &&
         ros2 run obstacle_avoidance robot_controller
       "

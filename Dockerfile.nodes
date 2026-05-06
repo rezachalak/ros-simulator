@@ -1,10 +1,10 @@
-FROM ros:humble
+FROM ros:iron
 
 # Install Python deps and CycloneDDS RMW
 RUN apt-get update && apt-get install -y \
     python3-colcon-common-extensions \
     python3-rosdep \
-    ros-humble-rmw-cyclonedds-cpp \
+    ros-iron-rmw-cyclonedds-cpp \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /ros_ws
@@ -13,7 +13,7 @@ COPY ros_ws/src ./src
 
 # Build the workspace
 RUN bash -c "\
-    source /opt/ros/humble/setup.bash && \
+    source /opt/ros/iron/setup.bash && \
     colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release \
 "
 
